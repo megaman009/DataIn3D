@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DataIn3D - UI Mockup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- LEFT: Controls panel -->
+        <div class="panel left">
+            <h2>Controls</h2>
+            <p>Select metric, year and region:</p>
+
+            <div class="control-group">
+                <h3>Metric</h3>
+                <div class="metrics">
+                    <button class="metric-btn active" data-metric="CO₂ emissions">CO₂ emissions</button>
+                    <button class="metric-btn" data-metric="Renewables %">Renewables %</button>
+                    <button class="metric-btn" data-metric="Forest area">Forest area</button>
+                    <button class="metric-btn" data-metric="Energy use">Energy use</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Year</h3>
+                <input type="range" id="year-slider" min="1990" max="2025" value="2020">
+                <div class="year-label">
+                    <span>1990</span>
+                    <span id="year-value">2020</span>
+                    <span>2025</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Region</h3>
+                <select id="region-select">
+                    <option value="All regions">All regions</option>
+                    <option value="Asia">Asia</option>
+                    <option value="Europe">Europe</option>
+                    <option value="Africa">Africa</option>
+                    <option value="North America">North America</option>
+                    <option value="Latin America">Latin America</option>
+                    <option value="Oceania">Oceania</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- CENTER: Globe -->
+        <div class="center">
+            <h2 id="view-title">3D Globe View – CO₂ emissions (2020)</h2>
+            <div class="fake-globe">
+                <div class="marker marker-europe" title="Europe"></div>
+                <div class="marker marker-asia" title="Asia"></div>
+                <div class="marker marker-africa" title="Africa"></div>
+                <div class="marker marker-americas" title="Americas"></div>
+            </div>
+        </div>
+
+
+        <!-- RIGHT: Country details -->
+        <div class="panel right">
+            <h2>View Summary</h2>
+            <p id="status-text">
+                Viewing <strong>CO₂ emissions</strong> for <strong>All regions</strong> in <strong>2020</strong>.
+            </p>
+            <hr style="border-color:#2a2a2a; margin: 16px 0;">
+            <h3>AI Insights (prototype)</h3>
+            <p id="ai-text" style="font-size: 0.9rem; opacity: 0.85;">
+                This area will display automatically generated insights about trends, 
+                comparisons between regions, and notable changes over time based on the 
+                selected metric and year.
+            </p>
+
+        </div>
+    </div>
+
+    <!-- Link to JavaScript file -->
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+/* Global page styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+}
+
+/* Main layout: 3 columns */
+.container {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    height: 100vh;
+}
+
+/* Shared panel styles */
+.panel {
+    padding: 20px;
+    border-right: 1px solid #2a2a2a;
+}
+
+.center {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Add a left border only to the right panel */
+.panel.right {
+    border-right: none;
+    border-left: 1px solid #2a2a2a;
+}
+
+/* Fake globe styling */
+.fake-globe {
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    margin: 30px auto;
+    position: relative;
+
+    /* JUST THE IMAGE */
+    background-image: url("earth.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+/* TURN OFF ANY EXTRA OVERLAY */
+.fake-globe::after {
+    content: none;
+}
+
+/* Generic marker style */
+.marker {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff0000;
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.9);
+    position: absolute;
+}
+
+/* Approximate positions for regions on the globe */
+.marker-europe {
+    top: 65px;
+    left: 140px;
+}
+
+.marker-asia {
+    top: 80px;
+    left: 175px;
+}
+
+.marker-africa {
+    top: 125px;
+    left: 135px;
+}
+
+.marker-americas {
+    top: 110px;
+    left: 80px;
+}
+
+/* Headings inside panels */
+.panel h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.control-group {
+    margin-top: 20px;
+}
+
+/* Metrics buttons */
+.metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.metric-btn {
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid #3a3a3a;
+    background: #1b1b1b;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.metric-btn.active {
+    background: #4caf50;
+    border-color: #4caf50;
+}
+
+/* Year slider */
+#year-slider {
+    width: 100%;
+}
+
+.year-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+/* Region dropdown */
+#region-select {
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #3a3a3a;
+    background: #1b1b1b;
+    color: white;
+}
+
+/* Center title */
+.center h2 {
+    margin-top: 0;
+}
