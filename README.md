@@ -65,6 +65,6 @@ Although no external data is loaded in the prototype, the full project will use:
 - Additional APIs for climate and environmental information  
 
 ## Author
-Developed by myself as part of a Sodtware Engineering graduation project.  
+Developed by myself as part of a Software Engineering graduation project.  
 This prototype demonstrates the foundational concept, with further development planned for the full implementation.
 
