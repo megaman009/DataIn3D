@@ -1,4 +1,4 @@
-/* Global page styles */
+/* Base page styling */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -6,79 +6,44 @@ body {
     color: white;
 }
 
-/* Main layout: 3 columns */
+/* Three-column layout (left: controls, center: globe, right: details) */
 .container {
     display: grid;
-    grid-template-columns: 250px 1fr 300px;
+    grid-template-columns: 250px 1fr 250px;
     height: 100vh;
 }
 
-/* Shared panel styles */
+/* Shared panel properties */
 .panel {
     padding: 20px;
     border-right: 1px solid #2a2a2a;
 }
 
+/* Center panel layout for the globe */
 .center {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* ensures globe and heading are centered */
+}
+
+/* Center panel title formatting */
+.center h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
     text-align: center;
 }
 
-/* Add a left border only to the right panel */
+/* Centering for the Globe.gl canvas */
+#globe-container canvas {
+    margin: 0 auto;
+    display: block;
+}
+
+/* Border difference for the right-side panel */
 .panel.right {
     border-right: none;
     border-left: 1px solid #2a2a2a;
-}
-
-/* Fake globe styling */
-.fake-globe {
-    width: 260px;
-    height: 260px;
-    border-radius: 50%;
-    margin: 30px auto;
-    position: relative;
-
-    /* JUST THE IMAGE */
-    background-image: url("earth.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-}
-
-/* TURN OFF ANY EXTRA OVERLAY */
-.fake-globe::after {
-    content: none;
-}
-
-/* Generic marker style */
-.marker {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #ff0000;
-    box-shadow: 0 0 6px rgba(255, 0, 0, 0.9);
-    position: absolute;
-}
-
-/* Approximate positions for regions on the globe */
-.marker-europe {
-    top: 65px;
-    left: 140px;
-}
-
-.marker-asia {
-    top: 80px;
-    left: 175px;
-}
-
-.marker-africa {
-    top: 125px;
-    left: 135px;
-}
-
-.marker-americas {
-    top: 110px;
-    left: 80px;
 }
 
 /* Headings inside panels */
@@ -87,11 +52,12 @@ body {
     margin-bottom: 10px;
 }
 
+/* Spacing between control groups */
 .control-group {
     margin-top: 20px;
 }
 
-/* Metrics buttons */
+/* Grid layout for the metric buttons */
 .metrics {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -99,6 +65,7 @@ body {
     margin-top: 8px;
 }
 
+/* Styling for metric buttons */
 .metric-btn {
     padding: 6px 8px;
     border-radius: 999px;
@@ -109,16 +76,18 @@ body {
     cursor: pointer;
 }
 
+/* Visual state for active metric button */
 .metric-btn.active {
     background: #4caf50;
     border-color: #4caf50;
 }
 
-/* Year slider */
+/* Full-width slider */
 #year-slider {
     width: 100%;
 }
 
+/* Slider label alignment */
 .year-label {
     display: flex;
     justify-content: space-between;
@@ -126,7 +95,7 @@ body {
     margin-top: 4px;
 }
 
-/* Region dropdown */
+/* Dropdown styling */
 #region-select {
     width: 100%;
     padding: 6px 8px;
@@ -134,9 +103,4 @@ body {
     border: 1px solid #3a3a3a;
     background: #1b1b1b;
     color: white;
-}
-
-/* Center title */
-.center h2 {
-    margin-top: 0;
 }

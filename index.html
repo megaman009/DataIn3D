@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <title>DataIn3D - UI Mockup</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Link external CSS file -->
+    <!-- Main stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <div class="container">
-        <!-- LEFT: Controls panel -->
+
+        <!-- Left-side control panel -->
         <div class="panel left">
             <h2>Controls</h2>
             <p>Select metric, year and region:</p>
@@ -49,37 +51,38 @@
             </div>
         </div>
 
-        <!-- CENTER: Globe -->
+        <!-- Centre panel for heading + globe -->
         <div class="center">
             <h2 id="view-title">3D Globe View – CO₂ emissions (2020)</h2>
-            <div class="fake-globe">
-                <div class="marker marker-europe" title="Europe"></div>
-                <div class="marker marker-asia" title="Asia"></div>
-                <div class="marker marker-africa" title="Africa"></div>
-                <div class="marker marker-americas" title="Americas"></div>
-            </div>
+
+            <!-- Globe.gl canvas attaches here -->
+            <div id="globe-container"></div>
         </div>
 
-
-        <!-- RIGHT: Country details -->
+        <!-- Right panel for summary text and AI output -->
         <div class="panel right">
             <h2>View Summary</h2>
             <p id="status-text">
-                Viewing <strong>CO₂ emissions</strong> for <strong>All regions</strong> in <strong>2020</strong>.
+                Viewing <strong>CO₂ emissions</strong> for 
+                <strong>All regions</strong> in <strong>2020</strong>.
             </p>
+
             <hr style="border-color:#2a2a2a; margin: 16px 0;">
+
             <h3>AI Insights (prototype)</h3>
             <p id="ai-text" style="font-size: 0.9rem; opacity: 0.85;">
-                This area will display automatically generated insights about trends, 
-                comparisons between regions, and notable changes over time based on the 
-                selected metric and year.
+                This area displays placeholder interpretations for the selected metric, region, and year.
             </p>
-
         </div>
+
     </div>
 
-    <!-- Link to JavaScript file -->
-    <script src="script.js"></script>
-</body>
+    <!-- Three.js and Globe.gl (CDN) -->
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/globe.gl"></script>
 
+    <!-- Main script -->
+    <script src="script.js"></script>
+
+</body>
 </html>
