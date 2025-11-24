@@ -18,6 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Basic slow rotation for constant motion
         world.controls().autoRotate = true;
         world.controls().autoRotateSpeed = 0.6;
+
+        // Force a resize of the canvas after the globe is created
+        setTimeout(() => {
+            const canvas = globeContainer.querySelector("canvas");
+            if (canvas) {
+                canvas.style.width = "100%";
+                canvas.style.height = "auto";
+    }
+}, 300);
+
     }
 
     // UI element references
