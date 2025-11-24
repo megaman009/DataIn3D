@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             const canvas = globeContainer.querySelector("canvas");
             if (canvas) {
-                canvas.style.width = "100%";
+                /* Avoid forcing canvas to 100% width (can cause overflow in some layouts).
+                   Use maxWidth so the canvas never extends beyond its container. */
+                canvas.style.maxWidth = "100%";
                 canvas.style.height = "auto";
     }
 }, 300);
