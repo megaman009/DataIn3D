@@ -6,8 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Container element for the 3D globe
     const globeContainer = document.getElementById("globe-container");
 
-    // Initialise the globe if the container and library exist
-    if (globeContainer && typeof Globe === "function") {
+    // Initialise the globe
+    if (!globeContainer) {
+        console.error("Globe container not found in HTML");
+    } 
+    else if (typeof Globe !== "function") {
+        console.error("Globe.gl library failed to load");
+    } 
+    else {
+
         world = Globe()
             (globeContainer)
             .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
@@ -15,21 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
             .backgroundColor('#121212')
             .pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
 
-        // Basic slow rotation for constant motion
         world.controls().autoRotate = true;
         world.controls().autoRotateSpeed = 0.6;
 
-        // Force a resize of the canvas after the globe is created
         setTimeout(() => {
             const canvas = globeContainer.querySelector("canvas");
             if (canvas) {
-                /* Avoid forcing canvas to 100% width (can cause overflow in some layouts).
-                   Use maxWidth so the canvas never extends beyond its container. */
                 canvas.style.maxWidth = "100%";
                 canvas.style.height = "auto";
-    }
-}, 300);
-
+            }
+        }, 300);
     }
 
     // UI element references
