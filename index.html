@@ -63,9 +63,10 @@
         <div class="panel right">
             <h2>View Summary</h2>
             <p id="status-text">
-                Viewing <strong>CO₂ emissions</strong> for 
+                Viewing <strong>CO₂ emissions</strong> for
                 <strong>All regions</strong> in <strong>2020</strong>.
             </p>
+            <p id="no-data-text" style="font-size:0.9rem; opacity:0.85; margin-top:8px; min-height:1.2em;"></p>
 
             <hr style="border-color:#2a2a2a; margin: 16px 0;">
 
@@ -80,6 +81,7 @@
     <!-- Globe.gl (CDN) -->
     <script src="https://unpkg.com/globe.gl"></script>
 
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
     <!-- Main script -->
     <script src="script.js"></script>
 

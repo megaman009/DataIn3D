@@ -1,40 +1,29 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    // Reference to the globe instance
     let world = null;
+    let lastRegion = null;
+    let countryCoords = {};
+    let countryRegions = {};
+    let co2DataCache = {};
+    let debounceTimer;
 
-    // Container element for the 3D globe
     const globeContainer = document.getElementById("globe-container");
 
-    // Initialise the globe
-    if (!globeContainer) {
-        console.error("Globe container not found in HTML");
-    } 
-    else if (typeof Globe !== "function") {
-        console.error("Globe.gl library failed to load");
-    } 
-    else {
-
-        world = Globe()
-            (globeContainer)
-            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-            .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-            .backgroundColor('#121212')
-            .pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
-
-        world.controls().autoRotate = true;
-        world.controls().autoRotateSpeed = 0.6;
-
-        setTimeout(() => {
-            const canvas = globeContainer.querySelector("canvas");
-            if (canvas) {
-                canvas.style.maxWidth = "100%";
-                canvas.style.height = "auto";
-            }
-        }, 300);
+    if (!globeContainer || typeof Globe !== "function") {
+        console.error("Globe initialization failed");
+        return;
     }
 
-    // UI element references
+    // Globe setup
+    world = Globe()(globeContainer)
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+        .backgroundColor('#121212')
+        .pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
+
+    world.controls().autoRotate = true;
+    world.controls().autoRotateSpeed = 0.6;
+
     const metricButtons = document.querySelectorAll(".metric-btn");
     const yearSlider = document.getElementById("year-slider");
     const yearValue = document.getElementById("year-value");
@@ -42,19 +31,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewTitle = document.getElementById("view-title");
     const statusText = document.getElementById("status-text");
     const aiText = document.getElementById("ai-text");
+    const noDataText = document.getElementById("no-data-text");
 
-    // Static regional summaries used as placeholder AI outputs
     const regionInsights = {
-        "All regions": "Globally, environmental trends vary significantly between regions. High-income economies often show stabilising or slightly declining CO₂ emissions per capita, while many emerging economies are still on a growth curve. Renewable energy adoption is increasing overall, but at different speeds.",
-        "Asia": "Asia combines some of the fastest-growing economies with rapidly increasing energy demand. Many countries are still heavily reliant on fossil fuels, but investment in renewables and large-scale projects is accelerating, especially in China and India.",
-        "Europe": "Europe generally shows declining CO₂ emissions per capita and a strong shift towards renewables. Many EU countries have climate targets, carbon pricing, and policies supporting energy transition and forest protection.",
-        "Africa": "Africa’s per-capita emissions remain relatively low compared to other regions, but access to energy is uneven. Solar and wind capacity have high potential, while land-use and deforestation remain key challenges.",
-        "North America": "North America has historically high per-capita emissions. Recent years show partial decoupling of emissions from economic growth, alongside a growing renewable sector.",
-        "Latin America": "Latin America shows moderate emissions with a strong presence of hydropower and other renewables. Deforestation and land-use change, especially in the Amazon, are major factors.",
-        "Oceania": "Oceania has relatively high emissions per capita. Renewable capacity is increasing, but fossil fuel exports and climate vulnerability remain core issues."
+        "All regions": "Global emissions vary by region.",
+        "Asia": "High growth in energy demand.",
+        "Europe": "Gradual emissions decoupling.",
+        "Africa": "Low emissions but rising demand.",
+        "North America": "Historically high emissions.",
+        "Latin America": "Mixed energy sources.",
+        "Oceania": "Small but high per-capita emissions."
     };
 
-    // Globe camera coordinates per region (used when switching regions)
     const regionCameraTargets = {
         "Europe": { lat: 50, lng: 10, altitude: 2.0 },
         "Asia": { lat: 30, lng: 90, altitude: 2.2 },
@@ -65,48 +53,188 @@ document.addEventListener("DOMContentLoaded", () => {
         "All regions": { lat: 20, lng: 0, altitude: 2.5 }
     };
 
-    // Updates the title, summary text and globe camera position
+    // Load country centroids by ISO code
+    async function loadCountryCoords() {
+        const res = await fetch("./countries-centroids.json");
+        const data = await res.json();
+
+        data.forEach(c => {
+            const key = String(c.code).trim().toUpperCase();
+            countryCoords[key] = {
+                lat: Number(c.lat),
+                lng: Number(c.lng)
+            };
+        });
+    }
+
+    // Parse CSV and normalize region names
+    async function loadRegionData() {
+        const res = await fetch("./continents2.csv");
+        const text = await res.text();
+
+        return new Promise((resolve, reject) => {
+            Papa.parse(text, {
+                header: true,
+                skipEmptyLines: true,
+                complete: results => {
+                    results.data.forEach(row => {
+                        const iso2 = (row["alpha-2"] || "").trim().toUpperCase();
+                        const iso3 = (row["alpha-3"] || "").trim().toUpperCase();
+                        const rawRegion = (row.region || "").trim();
+                        const subRegion = (row["sub-region"] || "").trim();
+
+                        let continent = rawRegion;
+                        if (rawRegion === "Americas") {
+                            if (subRegion === "Northern America") {
+                                continent = "North America";
+                            } else if (subRegion === "Latin America and the Caribbean") {
+                                continent = "Latin America";
+                            }
+                        }
+
+                        const key = iso3 || iso2;
+                        if (!key || !continent) return;
+
+                        countryRegions[key] = continent;
+                    });
+
+                    console.log("Regions loaded:", Object.keys(countryRegions).length);
+                    resolve();
+                },
+                error: err => reject(err)
+            });
+        });
+    }
+
+    async function loadCO2Data(year) {
+        if (co2DataCache[year]) {
+            return co2DataCache[year];
+        }
+
+        const res = await fetch(`https://datain3d-api.onrender.com/co2?year=${year}`);
+        const data = await res.json();
+        co2DataCache[year] = data;
+        return data;
+    }
+
+    // Filter points by selected region and metric
+    function updateGlobe(data) {
+        if (!world || !data) return;
+
+        const selectedRegion = regionSelect.value;
+
+        const values = data
+            .map(d => d["CO₂ emissions per capita"])
+            .filter(v => v > 0);
+
+        const max = values.length ? Math.max(...values) : 1;
+
+        const points = data.map(d => {
+
+            const code = String(d.Code).trim().toUpperCase();
+
+            const coords = countryCoords[code];
+            if (!coords) return null;
+
+            const region = countryRegions[code];
+
+            if (selectedRegion !== "All regions") {
+                if (!region) return null;
+                if (region !== selectedRegion) return null;
+            }
+
+            const value = d["CO₂ emissions per capita"];
+            if (!value || value <= 0) return null;
+
+            const normalized = Math.log(value + 1) / Math.log(max + 1);
+
+            return {
+                lat: coords.lat,
+                lng: coords.lng,
+                size: normalized,
+                color: `rgb(${Math.floor(255 * normalized)}, ${Math.floor(255 * (1 - normalized))}, 0)`
+            };
+
+        }).filter(Boolean);
+
+        if (points.length === 0) {
+            world.pointsData([]);
+            if (noDataText) {
+                noDataText.textContent = `No data points found for ${selectedRegion}. Try another region or year.`;
+            }
+            return;
+        }
+
+        if (noDataText) {
+            noDataText.textContent = "";
+        }
+
+        world
+            .pointsData(points)
+            .pointAltitude(d => d.size * 0.5)
+            .pointColor(d => d.color);
+    }
+
     function updateTexts() {
-        const activeMetricBtn = document.querySelector(".metric-btn.active");
-        const metric = activeMetricBtn ? activeMetricBtn.dataset.metric : "Metric";
+        const metric = document.querySelector(".metric-btn.active")?.dataset.metric || "Metric";
         const year = yearSlider.value;
         const region = regionSelect.value;
 
         viewTitle.textContent = `3D Globe View – ${metric} (${year})`;
 
-        statusText.innerHTML = `
-            Viewing <strong>${metric}</strong> for <strong>${region}</strong> in <strong>${year}</strong>.
-        `;
+        statusText.innerHTML =
+            `Viewing <strong>${metric}</strong> for <strong>${region}</strong> in <strong>${year}</strong>.`;
 
-        aiText.textContent = regionInsights[region] || regionInsights["All regions"];
+        aiText.textContent = regionInsights[region];
+    }
 
-        // Move the globe camera to match the selected region
-        if (world) {
-            const target = regionCameraTargets[region] || regionCameraTargets["All regions"];
+    function updateCamera(region) {
+        if (!world || region === lastRegion) return;
+
+        const target = regionCameraTargets[region];
+        if (target) {
             world.pointOfView(target, 1000);
+            lastRegion = region;
         }
     }
 
-    // Metric button behaviour
+    // EVENTS
     metricButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
             metricButtons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
+
+            const data = await loadCO2Data(yearSlider.value);
+            updateGlobe(data);
             updateTexts();
         });
     });
 
-    // Year slider behaviour
     yearSlider.addEventListener("input", () => {
         yearValue.textContent = yearSlider.value;
-        updateTexts();
+
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(async () => {
+            const data = await loadCO2Data(yearSlider.value);
+            updateGlobe(data);
+            updateTexts();
+        }, 300);
     });
 
-    // Region selection behaviour
-    regionSelect.addEventListener("change", () => {
+    regionSelect.addEventListener("change", async () => {
         updateTexts();
+        updateCamera(regionSelect.value);
+
+        const data = await loadCO2Data(yearSlider.value);
+        updateGlobe(data);
     });
 
-    // Initialise UI state on first load
+    // INIT
+    await loadCountryCoords();
+    await loadRegionData();
+
+    const initialData = await loadCO2Data(yearSlider.value);
+    updateGlobe(initialData);
     updateTexts();
 });
