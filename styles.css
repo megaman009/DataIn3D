@@ -6,82 +6,84 @@ body {
     color: white;
 }
 
-/* Minimal overflow protections and consistent sizing (small, safe change) */
+/* Layout safety */
 html, body {
     max-width: 100%;
-    overflow-x: hidden; /* hide small rounding/overflow issues */
+    overflow-x: hidden;
 }
 
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
-/* Three-column layout (left: controls, center: globe, right: details) */
+/* Three-column layout */
 .container {
     display: grid;
     grid-template-columns: 250px 1fr 250px;
     height: 100vh;
 }
 
-/* Shared panel properties */
+/* Panels */
 .panel {
     padding: 20px;
     border-right: 1px solid #2a2a2a;
-    min-width: 0; /* allow panel to shrink inside grid to avoid overflow */
+    min-width: 0;
 }
 
-/* Center panel layout for the globe */
+/* Center panel */
 .center {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* ensures globe and heading are centered */
-    min-width: 0; /* allow center column to shrink and avoid overflow */
+    align-items: center;
+    min-width: 0;
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* Center panel title formatting */
 .center h2 {
     margin-top: 0;
     margin-bottom: 16px;
     text-align: center;
 }
 
-/* Centering for the Globe.gl canvas */
+/* Globe container */
 #globe-container {
-    max-width: 100%;
-    overflow: hidden; /* ensure canvas can't visually overflow its container */
+    width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: center; /* center canvas horizontally */
-    align-items: center;     /* center canvas vertically within the center column */
-    width: 100%;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
+/* IMPORTANT FIX: WebGL must NOT use height:auto */
 #globe-container canvas {
-    margin: 0 auto;
+    width: 100% !important;
+    height: 100% !important;
     display: block;
-    max-width: 640px; /* sensible maximum globe size */
-    width: 100%;
-    height: auto;
+    margin: 0;
+    max-width: none; /* remove 640px constraint */
 }
 
-/* Border difference for the right-side panel */
+/* Right panel */
 .panel.right {
     border-right: none;
     border-left: 1px solid #2a2a2a;
 }
 
-/* Headings inside panels */
+/* Headings */
 .panel h2 {
     margin-top: 0;
     margin-bottom: 10px;
 }
 
-/* Spacing between control groups */
+/* Controls */
 .control-group {
     margin-top: 20px;
 }
 
-/* Grid layout for the metric buttons */
+/* Metrics grid */
 .metrics {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -89,7 +91,7 @@ html, body {
     margin-top: 8px;
 }
 
-/* Styling for metric buttons */
+/* Buttons */
 .metric-btn {
     padding: 6px 8px;
     border-radius: 999px;
@@ -100,18 +102,17 @@ html, body {
     cursor: pointer;
 }
 
-/* Visual state for active metric button */
 .metric-btn.active {
     background: #4caf50;
     border-color: #4caf50;
 }
 
-/* Full-width slider */
+/* Slider */
 #year-slider {
     width: 100%;
 }
 
-/* Slider label alignment */
+/* Labels */
 .year-label {
     display: flex;
     justify-content: space-between;
@@ -119,7 +120,7 @@ html, body {
     margin-top: 4px;
 }
 
-/* Dropdown styling */
+/* Dropdown */
 #region-select {
     width: 100%;
     padding: 6px 8px;
