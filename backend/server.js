@@ -92,7 +92,7 @@ Only return the insight text, no headings, no bullet points, no extra formatting
                     "X-Title": "DataIn3D"
                 },
                 body: JSON.stringify({
-                    model: "meta-llama/llama-3.1-8b-instruct:free",
+                    model: "mistralai/mistral-7b-instruct:free",
                     messages: [{ role: "user", content: prompt }],
                     max_tokens: 150
                 })
