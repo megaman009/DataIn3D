@@ -97,7 +97,7 @@ Only return the insight text, no headings, no bullet points, no extra formatting
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!text) {
-            return res.status(500).json({ error: "No response from Gemini" });
+            return res.status(500).json({ error: "No response from Gemini", raw: data });
         }
 
         res.json({ insight: text.trim() });
