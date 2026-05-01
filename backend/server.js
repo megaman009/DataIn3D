@@ -68,17 +68,7 @@ app.get("/insights", async (req, res) => {
         return res.status(500).json({ error: "OpenRouter API key not configured" });
     }
 
-    const prompt = `You are an educational assistant for a CO₂ emissions data visualisation tool called DataIn3D.
-
-The user is currently viewing CO₂ emissions per capita data for the region "${region}" in the year ${year}.
-
-Write a 2-3 sentence educational insight that:
-- Explains what was happening with CO₂ emissions in ${region} around ${year}
-- References specific real-world historical events if relevant (e.g. wars, economic crises, energy policy changes, industrial growth, natural disasters, major agreements like Kyoto Protocol etc.)
-- Is engaging, informative and educational in tone
-- Is factually accurate
-
-Only return the insight text, no headings, no bullet points, no extra formatting.`;
+const prompt = `You are an educational assistant for a CO₂ emissions data visualisation tool called DataIn3D. Write a single short paragraph (2-3 sentences) about CO₂ emissions in ${region} in ${year}. Mention real historical events like wars, disasters, economic crises, or energy policy changes if relevant. Be factual, engaging and educational. Do not include any thinking, planning, or meta-commentary — just the paragraph itself.`;
 
     try {
         const response = await fetch(
