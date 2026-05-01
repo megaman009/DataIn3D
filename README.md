@@ -1,53 +1,57 @@
 # DataIn3D
-
-Interactive 3D globe visualization for exploring global CO₂ emissions data.
+An interactive 3D globe for exploring global CO₂ emissions data, powered by AI-generated historical insights.
 
 ## Description
+DataIn3D is a browser-based educational web application that renders a 3D Earth globe using WebGL. It allows users to visualise CO₂ emissions per capita by country, filtered by region and year (1990–2025). Data points are displayed as coloured markers, with size and colour intensity representing emission levels.
 
-DataIn3D is a browser-based web application that renders a 3D Earth globe using WebGL. It allows users to visualize CO₂ emissions per capita by country, filtered by region and year. The globe displays data points as colored markers, with size and color intensity representing emission levels. Users can interact with the globe through region selection, year sliders, and metric buttons, with automatic camera movements for better viewing.
+What sets DataIn3D apart is its **AI Insights panel** — powered by OpenRouter and OpenAI's GPT-OSS 120B model, the app generates dynamic, historically contextual narratives for each region and year selection. For example, selecting Europe in 1986 might reference the Chernobyl disaster, while selecting 2020 highlights the impact of COVID-19 lockdowns on emissions.
 
-The project aims to make environmental data more accessible and engaging by presenting it in a geographical, interactive format rather than traditional charts or tables.
+The project aims to make environmental data more accessible and engaging by combining geographical 3D visualisation with AI-driven storytelling.
 
 ## Features
-
-- **3D Globe Rendering**: Interactive Earth model with auto-rotation and manual controls.
-- **Region Filtering**: Dropdown to filter data by continents (Asia, Europe, Africa, North America, Latin America, Oceania, or All regions).
-- **Year Selection**: Slider to select data from 1990 to 2025.
-- **Metric Selection**: Buttons for different metrics (currently CO₂ emissions; placeholders for Renewables %, Forest area, Energy use).
-- **Camera Movements**: Automatic globe positioning based on selected region.
-- **Data Caching**: Caches API responses to reduce load times for repeated year queries.
-- **No-Data Feedback**: Displays a message when no data points match the selected filters.
-- **Responsive UI**: Three-panel layout with controls, globe view, and summary insights.
+- **3D Globe Rendering** — Interactive Earth model with auto-rotation and manual controls
+- **Country Hover Tooltips** — Hover over any data point to see the country name and exact CO₂ value in tonnes per capita
+- **Region Filtering** — Dropdown to filter data by continent (Asia, Europe, Africa, North America, Latin America, Oceania, or All regions)
+- **Year Selection** — Slider to select data from 1990 to 2025
+- **Automatic Camera Movement** — Globe repositions smoothly when a new region is selected
+- **AI Insights Panel** — Dynamically generated 2-3 sentence historical narratives contextualising CO₂ trends for the selected region and year
+- **Data Caching** — API responses are cached to reduce load times for repeated year queries
+- **No-Data Feedback** — Displays a user-friendly message when no data points match the selected filters
 
 ## Tech Stack
+**Frontend:**
+- HTML, CSS, JavaScript
+- Globe.gl (built on Three.js) for 3D rendering
+- PapaParse for CSV parsing
 
-- **Frontend**: HTML, CSS, JavaScript
-- **3D Rendering**: Globe.gl (built on Three.js)
-- **Data Parsing**: PapaParse for CSV handling
-- **Data Sources**: External API for CO₂ data, local JSON/CSV files for coordinates and regions
-- **Deployment**: GitHub Pages
+**Backend:**
+- Node.js + Express
+- SQLite database for CO₂ emissions data
+- OpenRouter API (OpenAI GPT-OSS 120B) for AI-generated insights
+- Hosted on Render
 
-## Data
+**Deployment:**
+- Frontend: GitHub Pages
+- Backend: Render
 
-- **CO₂ Emissions**: Fetched from a hosted API (`https://datain3d-api.onrender.com/co2?year=YYYY`)
-- **Country Coordinates**: `countries-centroids.json` (centroid lat/lng for each country)
-- **Region Mapping**: `continents2.csv` (maps ISO codes to continents, with normalization for Americas)
-- **Backend**: Legacy Node.js files in `backend/` for potential future expansion
+## Data Sources
+- **CO₂ Emissions per Capita** — Our World in Data. Available at: https://ourworldindata.org/grapher/co-emissions-per-capita
+- **Country Coordinates (Lat/Lng)** — Natural Earth Data, 1:10m Cultural Vectors. Available at: https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/
+- **Region Mapping** — `continents2.csv` (maps ISO codes to continents)
+- **AI Insights** — Generated via OpenRouter API (OpenAI GPT-OSS 120B) at `https://datain3d-api.onrender.com/insights?year=YYYY&region=REGION`
 
 ## Usage
+1. Visit the live site at [https://megaman009.github.io/DataIn3D](https://megaman009.github.io/DataIn3D)
+2. Use the controls on the left to select a year and region
+3. Hover over any globe point to see the country name and CO₂ value
+4. View the AI-generated historical insight in the right panel
 
-1. Clone or download the repository.
-2. Open `index.html` in a modern web browser.
-3. Use the controls on the left to select a metric, year, and region.
-4. Observe the globe update with data points and camera movements.
-5. View summaries and insights in the right panel.
+## Known Limitations
+- Some countries may not render in their correct geographic positions due to inconsistencies between ISO code formats across datasets. This is a known data mapping limitation that could be resolved in future work by normalising all country codes to a single standard.
+- Other metric buttons (Renewables %, Forest area, Energy use) are currently UI placeholders — the project is focused on delivering full CO₂ functionality.
 
-No server setup required; all data is loaded client-side.
-
-## Notes
-
-- Currently focused on CO₂ emissions; other metrics are UI placeholders.
-- Data is cached per year to improve performance.
-- Region names are normalized (e.g., "Northern America" → "North America").
-- If no data points are found for a selection, a user-friendly message appears.
-- The globe uses CDN-hosted libraries for rendering.
+## References
+- Our World in Data. CO₂ emissions per capita dataset. Available at: https://ourworldindata.org/grapher/co-emissions-per-capita
+- Natural Earth Data. 1:10m Cultural Vectors – Admin 0 Countries. Available at: https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/
+- Globe.gl. WebGL Globe Library. Available at: https://globe.gl
+- OpenRouter. AI API Gateway. Available at: https://openrouter.ai
