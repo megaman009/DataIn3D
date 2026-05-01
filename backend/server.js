@@ -54,7 +54,7 @@ app.get("/co2", (req, res) => {
 /*
     AI INSIGHTS ROUTE
     Example: /insights?year=1986&region=Europe
-    Calls Gemini API and returns a historical narrative
+    Calls OpenRouter API and returns a historical narrative
 */
 app.get("/insights", async (req, res) => {
     const { year, region } = req.query;
@@ -63,9 +63,9 @@ app.get("/insights", async (req, res) => {
         return res.status(400).json({ error: "year and region are required" });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
-        return res.status(500).json({ error: "Gemini API key not configured" });
+        return res.status(500).json({ error: "OpenRouter API key not configured" });
     }
 
     const prompt = `You are an educational assistant for a CO₂ emissions data visualisation tool called DataIn3D.
@@ -82,22 +82,28 @@ Only return the insight text, no headings, no bullet points, no extra formatting
 
     try {
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
+            "https://openrouter.ai/api/v1/chat/completions",
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`,
+                    "HTTP-Referer": "https://megaman009.github.io/DataIn3D",
+                    "X-Title": "DataIn3D"
+                },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { maxOutputTokens: 150, temperature: 0.7 }
+                    model: "meta-llama/llama-3.1-8b-instruct:free",
+                    messages: [{ role: "user", content: prompt }],
+                    max_tokens: 150
                 })
             }
         );
 
         const data = await response.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const text = data?.choices?.[0]?.message?.content;
 
         if (!text) {
-            return res.status(500).json({ error: "No response from Gemini", raw: data });
+            return res.status(500).json({ error: "No response from OpenRouter", raw: data });
         }
 
         res.json({ insight: text.trim() });
