@@ -92,7 +92,7 @@ Only return the insight text, no headings, no bullet points, no extra formatting
                     "X-Title": "DataIn3D"
                 },
                 body: JSON.stringify({
-                    model: "mistralai/mistral-7b-instruct:free",
+                    model: "nvidia/nemotron-3-super-120b-a12b:free",
                     messages: [{ role: "user", content: prompt }],
                     max_tokens: 150
                 })
