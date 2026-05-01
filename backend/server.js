@@ -68,7 +68,7 @@ app.get("/insights", async (req, res) => {
         return res.status(500).json({ error: "OpenRouter API key not configured" });
     }
 
-const prompt = `You are an educational assistant for a CO₂ emissions data visualisation tool called DataIn3D. Write a single short paragraph (2-3 sentences) about CO₂ emissions in ${region} in ${year}. Mention real historical events like wars, disasters, economic crises, or energy policy changes if relevant. Be factual, engaging and educational. Do not include any thinking, planning, or meta-commentary — just the paragraph itself.`;
+    const prompt = `You are an educational assistant for a CO₂ emissions data visualisation tool called DataIn3D. Write a single short paragraph (2-3 sentences) about CO₂ emissions in ${region} in ${year}. Mention real historical events like wars, disasters, economic crises, or energy policy changes if relevant. Be factual, engaging and educational. Do not include any thinking, planning, or meta-commentary — just the paragraph itself.`;
 
     try {
         const response = await fetch(
@@ -96,7 +96,9 @@ const prompt = `You are an educational assistant for a CO₂ emissions data visu
             return res.status(500).json({ error: "No response from OpenRouter", raw: data });
         }
 
-        res.json({ insight: text.trim() });
+        const paragraphs = text.trim().split("\n").filter(p => p.trim().length > 0);
+        const insight = paragraphs[paragraphs.length - 1].trim();
+        res.json({ insight });
 
     } catch (err) {
         res.status(500).json({ error: err.message });
